@@ -168,7 +168,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
             <div className="flex items-center space-x-3 flex-1">
               <span className="text-sm">{getStatusIcon(task.status)}</span>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900">
+                <p
+                  onClick={() => router.push(`/task/${id}`)}
+                  className="text-sm font-medium text-gray-900"
+                >
                   {task.title.length > 5
                     ? `${task.title.slice(0, 5)}...`
                     : task.title}

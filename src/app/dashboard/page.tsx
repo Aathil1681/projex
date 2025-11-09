@@ -105,7 +105,7 @@ const DashboardPage = () => {
         <header className="bg-white border-b border-gray-200 px-6 py-4 flex-shrink-0">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-500 text-sm">
+              <p className="text-gray-500 text-xl">
                 Welcome back! Here's what's happening today.
               </p>
             </div>
@@ -238,7 +238,7 @@ const DashboardPage = () => {
           </div>
 
           {/* Projects Grid */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 flex flex-col h-[600px]">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 flex flex-col ">
             {/* Header */}
             <div className="p-6 border-b border-gray-200 flex-shrink-0">
               <h2 className="text-lg font-semibold text-gray-900">
@@ -247,7 +247,7 @@ const DashboardPage = () => {
             </div>
 
             {/* Scrollable Content */}
-            <div className="p-6 flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+            <div className="p-6 flex-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
               {projects.length === 0 ? (
                 <div className="text-center py-12">
                   <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">

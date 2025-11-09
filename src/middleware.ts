@@ -19,12 +19,7 @@ export async function middleware(request: NextRequest) {
       console.log({ payload });
     }
 
-    const onlyPublicRoutes = [
-      "/register",
-      "/login",
-      "forgot-password",
-      "reset-password",
-    ];
+    const onlyPublicRoutes = ["/register", "/login"];
 
     //check if it is not user and requested url is not mentioned in onlyPrivateRoute
     //This will redirect user to requested page after login is completed
@@ -32,7 +27,7 @@ export async function middleware(request: NextRequest) {
     if (!session && !onlyPublicRoutes.includes(url)) {
       //proceed
 
-      let nextUrl = "/login";
+      let nextUrl = "/auth/login";
       nextUrl += `?redirect_to=${url}`;
 
       return NextResponse.redirect(new URL(nextUrl, request.url));
@@ -43,7 +38,7 @@ export async function middleware(request: NextRequest) {
     if (session && onlyPublicRoutes.includes(url)) {
       //proceed
 
-      let url = "/"; //redirect to home
+      let url = "/dashboard";
 
       return NextResponse.redirect(new URL(url, request.url));
     }
@@ -56,7 +51,7 @@ export async function middleware(request: NextRequest) {
 
     (await cookies()).delete(cookieKeys.USER_TOKEN);
 
-    return NextResponse.redirect(new URL("/login", request.url));
+    return NextResponse.redirect(new URL("/auth/login", request.url));
   }
 }
 export const config = {
