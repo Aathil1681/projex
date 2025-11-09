@@ -4,6 +4,7 @@ export const userRegisterSchema = z.object({
   name: z.string().min(2, "Name is too short"),
   email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
+  adminKey: z.string().optional(),
 });
 
 export type UserRegisterType = z.infer<typeof userRegisterSchema>;
@@ -65,3 +66,12 @@ export const authResponseSchema = z.object({
 });
 
 export type AuthResponseType = z.infer<typeof authResponseSchema>;
+
+export const taskCreateFormSchema = z.object({
+  title: z.string().min(3, "Task title is too short"),
+  description: z.string().optional(),
+  assigneeId: z.string().optional(),
+  projectId: z.string(), // automatically set from ProjectCard
+});
+
+export type TaskCreateFormType = z.infer<typeof taskCreateFormSchema>;
