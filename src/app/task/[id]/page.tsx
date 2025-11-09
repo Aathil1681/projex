@@ -48,13 +48,14 @@ const TaskDetailPage = () => {
 
   useEffect(() => {
     if (task?.projectId) fetchProject(task.projectId);
+    if (task?.assigneeId) fetchAssignee(task.assigneeId);
   }, [task]);
 
   const fetchTask = async () => {
     try {
       const res = await api.get(`auth/me`);
       const userTasks = res.data.user.tasks as Task[];
-      const t = userTasks.find((task) => task.id === taskId);
+      const t = userTasks.find((t) => t.id === taskId);
       setTask(t ?? null);
     } catch (err: any) {
       toast.error("Failed to fetch task");
@@ -71,6 +72,15 @@ const TaskDetailPage = () => {
     } catch (err) {
       console.error("Failed to fetch project", err);
       setProject(null);
+    }
+  };
+
+  const fetchAssignee = async (id: string) => {
+    try {
+      const res = await api.get(`users/${id}`);
+      setTask((prev) => (prev ? { ...prev, assignee: res.data } : prev));
+    } catch (err) {
+      console.error("Failed to fetch assignee", err);
     }
   };
 
@@ -104,13 +114,13 @@ const TaskDetailPage = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "TODO":
-        return "bg-gray-100 text-gray-800 border-gray-300";
+        return "bg-red-300 text-red-700";
       case "IN_PROGRESS":
-        return "bg-blue-100 text-blue-800 border-blue-300";
+        return "bg-blue-300 text-blue-700";
       case "DONE":
-        return "bg-green-100 text-green-800 border-green-300";
+        return "bg-green-300 text-green-700";
       default:
-        return "bg-gray-100 text-gray-800 border-gray-300";
+        return "bg-gray-100 text-gray-800";
     }
   };
 
@@ -125,93 +135,92 @@ const TaskDetailPage = () => {
   if (!task) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-3">
-            Task Not Found
-          </h1>
-        </div>
+        <h1 className="text-2xl font-bold text-gray-900">Task Not Found</h1>
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      <Sidebar
-        isCollapsed={isSidebarCollapsed}
-        onToggle={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-      />
+    <div className="flex min-h-screen bg-white">
+      {/* Sidebar fixed */}
+      <div
+        className={`fixed top-0 left-0 bottom-0 ${
+          isSidebarCollapsed ? "w-20" : "w-64"
+        }`}
+      >
+        <Sidebar
+          isCollapsed={isSidebarCollapsed}
+          onToggle={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+        />
+      </div>
 
-      <main className="flex-1 p-8 overflow-y-auto">
-        {/* Task Header */}
-        <div className="mb-6">
-          <h1 className="text-3xl font-semibold text-gray-900 tracking-tight">
-            {task.title}
-          </h1>
-          <p className="text-gray-500 mt-1">
+      {/* Main content scrollable */}
+      <main className={`flex-1 ml-64 p-8 overflow-y-auto `}>
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold text-gray-900">{task.title}</h1>
+          <p className="mt-2 text-gray-500">
             Project:{" "}
-            <span className="text-gray-800 font-medium">
+            <span className="font-medium text-gray-800">
               {project?.title ?? "No project linked"}
             </span>
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Column: Description & Status */}
+          {/* Left column */}
           <div className="lg:col-span-2 space-y-6">
-            <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-3">
+            {/* Description card */}
+            <div className="bg-white rounded-2xl shadow-md p-6 hover:shadow-lg transition-shadow">
+              <h2 className="text-xl font-semibold text-gray-900 mb-3">
                 Description
               </h2>
-              <p className="text-gray-700 leading-relaxed">
-                {task.description ?? "No description"}
-              </p>
+              <p className="text-gray-700">{task.description}</p>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-3">
+            {/* Status update card */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">
                 Update Status
               </h2>
-              <div className="flex gap-4">
+              <div className="flex flex-wrap gap-2">
                 {(["TODO", "IN_PROGRESS", "DONE"] as Task["status"][]).map(
                   (status) => (
                     <button
                       key={status}
                       onClick={() => updateTaskStatus(status)}
                       disabled={updating || task.status === status}
-                      className={`flex-1 p-3 rounded-xl text-sm font-medium border text-center transition-all ${
-                        task.status === status
-                          ? `${getStatusColor(
-                              status
-                            )} ring-2 ring-offset-1 ring-blue-400`
-                          : "bg-gray-50 text-gray-700 hover:bg-gray-100"
-                      } ${updating ? "opacity-60 cursor-not-allowed" : ""}`}
+                      className={`
+          px-4 py-2 rounded-full text-sm font-medium transition-all duration-200
+          border-2 flex items-center space-x-2
+          ${
+            task.status === status
+              ? `${getStatusColor(status)} border-current text-white`
+              : "bg-white border-gray-300 text-gray-700 hover:border-gray-400"
+          }
+          ${updating ? "opacity-50 cursor-not-allowed" : "hover:scale-105"}
+        `}
                     >
-                      {formatStatus(status)}
+                      <div
+                        className={`w-2 h-2 rounded-full ${
+                          task.status === status
+                            ? "bg-white"
+                            : getStatusColor(status)
+                        }`}
+                      ></div>
+                      <span>{formatStatus(status)}</span>
                     </button>
                   )
                 )}
               </div>
-              {updating && (
-                <p className="text-xs text-gray-500 mt-2">Updating status...</p>
-              )}
             </div>
           </div>
 
-          {/* Right Column: Task Info */}
+          {/* Right column: Task info */}
           <div className="space-y-6">
-            <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 space-y-3">
-              <h2 className="text-lg font-semibold text-gray-900 mb-3">
-                Task Info
-              </h2>
-              <div>
-                <p className="text-xs text-gray-500">Assignee</p>
-                <p className="text-gray-900 font-medium">
-                  {task.assignee?.name ?? "Unassigned"}
-                </p>
-                <p className="text-sm text-gray-600">
-                  {task.assignee?.email ?? "N/A"}
-                </p>
-              </div>
+            <div className="bg-white rounded-2xl shadow-md p-6 hover:shadow-lg transition-shadow space-y-4">
+              <h2 className="text-xl font-semibold text-gray-900">Task Info</h2>
+
               <div>
                 <p className="text-xs text-gray-500">Created</p>
                 <p className="text-gray-900">{formatDate(task.createdAt)}</p>

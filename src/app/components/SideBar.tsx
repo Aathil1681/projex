@@ -11,8 +11,10 @@ import {
   HiOutlineUsers,
   HiOutlineChevronRight,
   HiOutlineChevronDown,
+  HiOutlineChevronLeft,
 } from "react-icons/hi2";
 import api from "@/app/helpers/baseApi";
+import TeamMembersOverlay from "./TeamMembersOverlay";
 
 interface SidebarProps {
   isCollapsed: boolean;
@@ -37,6 +39,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isTeamOverlayOpen, setIsTeamOverlayOpen] = useState(false);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -97,7 +100,13 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
       icon: <HiOutlineChartBar />,
       path: "/reports",
     },
-    { id: "team", name: "Team", icon: <HiOutlineUsers />, path: "/team" },
+    {
+      id: "team",
+      name: "Team",
+      icon: <HiOutlineUsers />,
+      path: null,
+      action: () => setIsTeamOverlayOpen(true),
+    },
   ];
 
   useEffect(() => {
@@ -126,6 +135,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
   const handleItemClick = (item: any) => {
     if (item.hasChildren) {
       setExpandedProject(expandedProject === item.id ? null : item.id);
+    } else if (item.action) {
+      item.action();
     } else if (item.path) {
       router.push(item.path);
     }
@@ -153,9 +164,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
           onClick={onToggle}
           className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors"
         >
-          <HiOutlineChevronRight
+          <HiOutlineChevronLeft
             className={`w-5 h-5 text-gray-500 transition-transform ${
-              isCollapsed ? "rotate-180" : ""
+              isCollapsed ? "rotate-180 translate-x-2 bg-white rounded-md " : ""
             }`}
           />
         </button>
@@ -264,6 +275,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
           </div>
         ))}
       </nav>
+      <TeamMembersOverlay
+        isOpen={isTeamOverlayOpen}
+        onClose={() => setIsTeamOverlayOpen(false)}
+      />
     </div>
   );
 };
