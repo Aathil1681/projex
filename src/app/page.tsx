@@ -14,7 +14,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-100">
       {/* Header Logo */}
-      <div className="absolute top-8 left-8 flex items-center group">
+      <div className="absolute top-10 left-8 flex items-center group">
         <div className="flex items-center justify-center w-12 h-12 bg-blue-600 rounded-xl shadow-lg transition-all duration-300 group-hover:bg-blue-700 group-hover:scale-105 group-hover:shadow-xl">
           <SiOpenproject className="w-7 h-7 text-white transition-transform duration-300 group-hover:scale-110" />
         </div>

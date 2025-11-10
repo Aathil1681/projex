@@ -256,7 +256,7 @@ const ProjectDetailsPage = () => {
   const doneTasks = project.tasks.filter((task) => task.status === "DONE");
 
   return (
-    <div className="flex h-screen bg-white overflow-hidden">
+    <div className="flex h-screen bg-gray-50 overflow-hidden">
       {/* Sidebar */}
       <Sidebar
         isCollapsed={isSidebarCollapsed}

@@ -151,7 +151,7 @@ const ReportsPage = () => {
   }
 
   return (
-    <div className="flex min-h-screen bg-white">
+    <div className="flex min-h-screen bg-gray-50">
       <div className="fixed top-0 left-0 bottom-0">
         <Sidebar
           isCollapsed={isSidebarCollapsed}

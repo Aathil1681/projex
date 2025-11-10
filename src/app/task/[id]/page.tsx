@@ -141,7 +141,7 @@ const TaskDetailPage = () => {
   }
 
   return (
-    <div className="flex min-h-screen bg-white">
+    <div className="flex min-h-screen bg-gray-50">
       {/* Sidebar fixed */}
       <div
         className={`fixed top-0 left-0 bottom-0 ${
